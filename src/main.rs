@@ -4,12 +4,12 @@ use axum::{routing::get, Router};
 async fn main() {
     let app = Router::new().route("/hello", get(hello_handler));
 
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
+    axum::Server::bind(&"0.0.0.0:8080".parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
 }
 
 async fn hello_handler() -> &'static str {
-    "Hello dca api!"
+    "New update! \n"
 }
