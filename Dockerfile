@@ -48,4 +48,4 @@ WORKDIR /app
 USER web:web
 
 #start the application
-CMD ["./rusty-dca"]
+ENTRYPOINT ["/app/rusty-dca"]
