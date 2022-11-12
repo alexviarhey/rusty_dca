@@ -1,0 +1,41 @@
+use axum::{routing::get, Router};
+use mongodb::{options::ClientOptions, Client, Database, bson::doc};
+
+#[tokio::main]
+async fn main() {
+
+    let db = match connect_to_the_mongo().await {
+        Ok(db) => db,
+        Err(err) => {
+            println!("{}", err);
+            panic!("Cannot connect to the database!");
+        }
+    };
+
+
+    let app = Router::new().route("/hello", get(hello_handler));
+
+    axum::Server::bind(&"0.0.0.0:8080".parse().unwrap())
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+
+async fn hello_handler() -> &'static str {
+    "New update! \n"
+}
+
+
+
+async fn connect_to_the_mongo() -> Result<Database, mongodb::error::Error> {
+    //let client = Client::with_uri_str("mongodb+srv://dca:8DnryMrPQfZNa0CZ@cluster0.rhehpau.mongodb.net/?retryWrites=true&w=majority").await?;
+    let client = Client::with_uri_str("mongodb://localhost:27017").await?;
+    let db = client.database("dca");
+
+    // Ping the server to see if you can connect to the cluster
+    db.run_command(doc! {"ping": 1}, None).await?;
+
+    println!("Successfully connected to the database!");
+
+    Ok(db)
+}
